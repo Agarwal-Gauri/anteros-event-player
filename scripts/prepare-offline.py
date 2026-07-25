@@ -3,6 +3,7 @@ import json
 import re
 import shutil
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -34,11 +35,12 @@ def main():
 
     source_manifest = json.loads((ROOT / "data" / "experiences.json").read_text())
     local_manifest = {}
+    downloads = []
     for digest, experience in source_manifest.items():
         source_url = experience["url"]
         suffix = Path(urlparse(source_url).path).suffix or ".mp4"
         filename = f"{digest[:16]}{suffix}"
-        download(source_url, videos / filename)
+        downloads.append((source_url, videos / filename))
         local_manifest[digest] = {
             **experience,
             "url": f"./videos/{filename}",
@@ -48,7 +50,10 @@ def main():
     match = re.search(r'loopVideo:\\s*"([^"]+)"', config_text)
     if not match:
         raise RuntimeError("Could not read loop URL from config.js")
-    download(match.group(1), videos / "anteros-loop.mp4")
+    downloads.append((match.group(1), videos / "anteros-loop.mp4"))
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        list(pool.map(lambda item: download(*item), downloads))
 
     (data / "experiences.json").write_text(
         json.dumps(local_manifest, indent=2, sort_keys=True) + "\n"
