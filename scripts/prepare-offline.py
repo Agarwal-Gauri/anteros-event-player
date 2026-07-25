@@ -47,7 +47,7 @@ def main():
         }
 
     config_text = (ROOT / "config.js").read_text()
-    match = re.search(r'loopVideo:\\s*"([^"]+)"', config_text)
+    match = re.search(r'loopVideo:\s*"([^"]+)"', config_text)
     if not match:
         raise RuntimeError("Could not read loop URL from config.js")
     downloads.append((match.group(1), videos / "anteros-loop.mp4"))
@@ -61,6 +61,20 @@ def main():
     (DESTINATION / "config.js").write_text(
         'window.ANTEROS_CONFIG = { loopVideo: "./videos/anteros-loop.mp4" };\n'
     )
+    (DESTINATION / "START_HERE.txt").write_text(
+        "ANTEROS OFFLINE EVENT PLAYER\n\n"
+        "Mac: double-click start.command, then keep its Terminal window open.\n"
+        "If the browser does not open, visit http://localhost:8080.\n\n"
+        "All videos are stored in this folder. Wi-Fi is not required.\n"
+    )
+    start_script = DESTINATION / "start.command"
+    start_script.write_text(
+        '#!/usr/bin/env bash\n'
+        'cd "$(dirname "$0")"\n'
+        '(sleep 1; open http://localhost:8080) &\n'
+        'python3 -m http.server 8080\n'
+    )
+    start_script.chmod(0o755)
     print(f"\nOffline player ready at {DESTINATION}")
     print(
         "Start it with: "
