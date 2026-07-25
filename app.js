@@ -5,7 +5,6 @@ const form = document.querySelector("#lookup-form");
 const input = document.querySelector("#email");
 const message = document.querySelector("#message");
 const player = document.querySelector("#player");
-const idleLabel = document.querySelector("#idle-label");
 const experienceLabel = document.querySelector("#experience-label");
 const resetButton = document.querySelector("#reset");
 
@@ -47,7 +46,6 @@ function showIdleLoop() {
   player.src = LOOP_VIDEO;
   player.load();
   player.play().catch(() => {});
-  idleLabel.hidden = false;
   experienceLabel.hidden = true;
   resetButton.hidden = true;
   form.reset();
@@ -64,7 +62,6 @@ function showExperience(experience) {
   player.play().catch(() => {
     setMessage("Press play on the video to begin.", "success");
   });
-  idleLabel.hidden = true;
   experienceLabel.textContent = `${experience.experience} · Your film`;
   experienceLabel.hidden = false;
   resetButton.hidden = false;

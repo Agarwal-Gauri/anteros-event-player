@@ -218,7 +218,6 @@ button:active {
   );
 }
 
-.idle-label,
 .experience-label {
   position: absolute;
   top: 28px;
@@ -235,14 +234,6 @@ button:active {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   backdrop-filter: blur(12px);
-}
-
-.live-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 12px rgba(255, 79, 63, 0.82);
 }
 
 .reset {
