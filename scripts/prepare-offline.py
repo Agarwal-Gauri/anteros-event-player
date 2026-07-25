@@ -10,7 +10,13 @@ from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 DESTINATION = ROOT / "offline-player"
-STATIC_FILES = ("index.html", "styles.css", "app.js", ".nojekyll")
+STATIC_FILES = (
+    "index.html",
+    "styles.css",
+    "app.js",
+    ".nojekyll",
+    "assets/koyal-logo.png",
+)
 
 
 def download(url, destination):
@@ -31,7 +37,9 @@ def main():
     data.mkdir(parents=True, exist_ok=True)
 
     for name in STATIC_FILES:
-        shutil.copy2(ROOT / name, DESTINATION / name)
+        destination = DESTINATION / name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(ROOT / name, destination)
 
     source_manifest = json.loads((ROOT / "data" / "experiences.json").read_text())
     local_manifest = {}
