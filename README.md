@@ -23,3 +23,15 @@ Then commit and push `data/experiences.json`. GitHub Pages updates automatically
 
 URL priority per row: `approved_video_url`, then `narrated_url`, then
 `final_video_url`.
+
+## Prepare for an event without Wi-Fi
+
+Run this once while online:
+
+```bash
+python3 scripts/prepare-offline.py
+python3 -m http.server 8080 --directory offline-player
+```
+
+Then open `http://localhost:8080`. The page, idle loop, and participant films
+will all play from the laptop. Leave the terminal window open during the event.

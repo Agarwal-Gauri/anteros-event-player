@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+import json
+import re
+import shutil
+import urllib.request
+from pathlib import Path
+from urllib.parse import urlparse
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DESTINATION = ROOT / "offline-player"
+STATIC_FILES = ("index.html", "styles.css", "app.js", ".nojekyll")
+
+
+def download(url, destination):
+    if destination.exists() and destination.stat().st_size:
+        print(f"Already downloaded: {destination.name}")
+        return
+    temporary = destination.with_suffix(destination.suffix + ".part")
+    print(f"Downloading: {destination.name}")
+    with urllib.request.urlopen(url) as response, temporary.open("wb") as output:
+        shutil.copyfileobj(response, output)
+    temporary.replace(destination)
+
+
+def main():
+    videos = DESTINATION / "videos"
+    data = DESTINATION / "data"
+    videos.mkdir(parents=True, exist_ok=True)
+    data.mkdir(parents=True, exist_ok=True)
+
+    for name in STATIC_FILES:
+        shutil.copy2(ROOT / name, DESTINATION / name)
+
+    source_manifest = json.loads((ROOT / "data" / "experiences.json").read_text())
+    local_manifest = {}
+    for digest, experience in source_manifest.items():
+        source_url = experience["url"]
+        suffix = Path(urlparse(source_url).path).suffix or ".mp4"
+        filename = f"{digest[:16]}{suffix}"
+        download(source_url, videos / filename)
+        local_manifest[digest] = {
+            **experience,
+            "url": f"./videos/{filename}",
+        }
+
+    config_text = (ROOT / "config.js").read_text()
+    match = re.search(r'loopVideo:\\s*"([^"]+)"', config_text)
+    if not match:
+        raise RuntimeError("Could not read loop URL from config.js")
+    download(match.group(1), videos / "anteros-loop.mp4")
+
+    (data / "experiences.json").write_text(
+        json.dumps(local_manifest, indent=2, sort_keys=True) + "\n"
+    )
+    (DESTINATION / "config.js").write_text(
+        'window.ANTEROS_CONFIG = { loopVideo: "./videos/anteros-loop.mp4" };\n'
+    )
+    print(f"\nOffline player ready at {DESTINATION}")
+    print(
+        "Start it with: "
+        f"python3 -m http.server 8080 --directory {DESTINATION}"
+    )
+
+
+if __name__ == "__main__":
+    main()

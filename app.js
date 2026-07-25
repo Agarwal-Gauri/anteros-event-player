@@ -1,5 +1,4 @@
-const LOOP_VIDEO =
-  "https://s3.ap-south-1.amazonaws.com/koyal-beta-v1/koyalxp/anteros-bulk/2026-07-25/anteros-loop.mp4";
+const LOOP_VIDEO = window.ANTEROS_CONFIG.loopVideo;
 const IDLE_TIMEOUT_MS = 3 * 60 * 1000;
 
 const form = document.querySelector("#lookup-form");
