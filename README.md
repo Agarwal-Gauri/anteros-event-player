@@ -1,7 +1,7 @@
-# Anteros Event Player
+# Koyal Event Player
 
 Static event kiosk: guests enter their registration email and watch their
-personalized film. The idle screen plays the shared Anteros loop.
+personalized film. The idle screen plays the shared Koyal loop.
 
 ## Update the experience index
 
