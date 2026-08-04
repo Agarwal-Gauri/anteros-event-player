@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
+import argparse
 import csv
 import hashlib
 import json
-import sys
 from pathlib import Path
 
 
@@ -14,14 +14,27 @@ def selected_url(row):
     )
 
 
-def main():
-    if len(sys.argv) < 2:
-        raise SystemExit(
-            "usage: python scripts/build-manifest.py INDEX.csv [FALLBACKS.csv ...]"
-        )
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Build the hashed-email Anteros player manifest from result CSVs."
+    )
+    parser.add_argument(
+        "--merge-existing",
+        action="store_true",
+        help="Preserve entries already present in data/experiences.json.",
+    )
+    parser.add_argument("sources", nargs="+", type=Path, metavar="CSV")
+    return parser.parse_args()
 
+
+def main():
+    args = parse_args()
+    destination = Path(__file__).resolve().parents[1] / "data" / "experiences.json"
     output = {}
-    for source in map(Path, sys.argv[1:]):
+    if args.merge_existing and destination.exists():
+        output = json.loads(destination.read_text(encoding="utf-8"))
+
+    for source in args.sources:
         with source.open(newline="", encoding="utf-8-sig") as handle:
             for row in csv.DictReader(handle):
                 email = row.get("email", "").strip().lower()
@@ -37,7 +50,6 @@ def main():
                 )
                 output[key] = {"experience": experience, "url": url}
 
-    destination = Path(__file__).resolve().parents[1] / "data" / "experiences.json"
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(output, indent=2, sort_keys=True) + "\n")
     print(f"Wrote {len(output)} experiences to {destination}")
