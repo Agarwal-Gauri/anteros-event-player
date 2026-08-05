@@ -1,4 +1,9 @@
-const LOOP_VIDEO = window.ANTEROS_CONFIG.loopVideo;
+const configuredLoops = window.ANTEROS_CONFIG.loopVideos || [];
+const LOOP_VIDEOS = configuredLoops.length
+  ? configuredLoops
+  : [{ label: "Koyal Experiences", url: window.ANTEROS_CONFIG.loopVideo }].filter(
+      (video) => video.url,
+    );
 const IDLE_TIMEOUT_MS = 3 * 60 * 1000;
 
 const form = document.querySelector("#lookup-form");
@@ -10,6 +15,8 @@ const resetButton = document.querySelector("#reset");
 
 let experiences = {};
 let idleTimer;
+let idleVideoIndex = 0;
+let isShowingExperience = false;
 
 function setMessage(text = "", state = "") {
   message.textContent = text;
@@ -39,11 +46,16 @@ function armIdleTimer() {
 
 function showIdleLoop() {
   window.clearTimeout(idleTimer);
+  isShowingExperience = false;
   player.pause();
-  player.removeAttribute("controls");
+  player.controls = true;
   player.muted = true;
-  player.loop = true;
-  player.src = LOOP_VIDEO;
+  player.loop = LOOP_VIDEOS.length === 1;
+  if (!LOOP_VIDEOS.length) {
+    setMessage("The base experience reel is not configured.", "error");
+    return;
+  }
+  player.src = LOOP_VIDEOS[idleVideoIndex].url;
   player.load();
   player.play().catch(() => {});
   experienceLabel.hidden = true;
@@ -53,6 +65,7 @@ function showIdleLoop() {
 }
 
 function showExperience(experience) {
+  isShowingExperience = true;
   player.pause();
   player.controls = true;
   player.muted = false;
@@ -98,11 +111,16 @@ form.addEventListener("submit", async (event) => {
 
 resetButton.addEventListener("click", showIdleLoop);
 player.addEventListener("ended", () => {
-  window.setTimeout(showIdleLoop, 1500);
+  if (isShowingExperience) {
+    window.setTimeout(showIdleLoop, 1500);
+    return;
+  }
+  idleVideoIndex = (idleVideoIndex + 1) % LOOP_VIDEOS.length;
+  showIdleLoop();
 });
 ["pointerdown", "keydown", "touchstart"].forEach((eventName) => {
   document.addEventListener(eventName, () => {
-    if (!player.loop) armIdleTimer();
+    if (isShowingExperience) armIdleTimer();
   });
 });
 

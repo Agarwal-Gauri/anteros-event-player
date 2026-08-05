@@ -1,7 +1,27 @@
 # Koyal Event Player
 
 Static event kiosk: guests enter their registration email and watch their
-personalized film. The idle screen plays the shared Koyal loop.
+personalized film. Before lookup and after reset, the right-hand player rotates
+through shared base films only; participant films never appear in that idle reel.
+Native video controls remain available in both modes so viewers can pause, seek,
+adjust volume, or enter fullscreen.
+
+## Configure the base-film reel
+
+Set `loopVideos` in `config.js` to the longer base masters. They play in order
+and repeat after the last film:
+
+```js
+loopVideos: [
+  { label: "Space", url: "https://.../space-long.mp4" },
+  { label: "Titanic", url: "https://.../titanic-long.mp4" },
+  { label: "Bollywood", url: "https://.../bollywood-long.mp4" },
+]
+```
+
+The repository currently retains the existing shared event loop as a temporary
+single-item fallback. Do not publish the participant email campaign until the
+three approved long-master URLs have replaced it and each one has been tested.
 
 ## Update the experience index
 
