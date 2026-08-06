@@ -183,33 +183,6 @@ button:active {
   color: #a4e6b3;
 }
 
-.personal-film-link {
-  display: inline-flex;
-  min-height: 48px;
-  margin-top: 12px;
-  padding: 0 18px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--white);
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: background-color 180ms var(--ease-out);
-}
-
-.personal-film-link[hidden] {
-  display: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .personal-film-link:hover {
-    background: rgba(255, 255, 255, 0.17);
-  }
-}
-
 .privacy {
   margin: 0;
   color: rgba(255, 255, 255, 0.34);
@@ -243,6 +216,44 @@ button:active {
     transparent 72%,
     rgba(0, 0, 0, 0.42)
   );
+}
+
+.experience-label {
+  position: absolute;
+  top: 28px;
+  left: 30px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.58);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+}
+
+.reset {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  padding: 11px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.64);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 650;
+  backdrop-filter: blur(12px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .reset:hover {
+    background: rgba(30, 30, 30, 0.82);
+  }
 }
 
 @media (max-width: 860px) {
