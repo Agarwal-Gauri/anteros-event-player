@@ -9,7 +9,7 @@
       content="Find and watch your personalized Koyal experience."
     />
     <title>Koyal — Your Experience</title>
-    <link rel="stylesheet" href="./styles.css?v=20260805-2" />
+    <link rel="stylesheet" href="./styles.css?v=20260806-1" />
   </head>
   <body>
     <main class="kiosk">
@@ -45,11 +45,21 @@
                 placeholder="you@example.com"
                 required
               />
-              <button type="submit">Play my film</button>
+              <button type="submit">Find my film</button>
             </div>
           </form>
 
           <p id="message" class="message" role="status" aria-live="polite"></p>
+          <a
+            id="personal-film-link"
+            class="personal-film-link"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            hidden
+          >
+            Watch your film →
+          </a>
         </div>
 
         <p class="privacy">Your email stays on this device.</p>
@@ -65,14 +75,10 @@
           preload="auto"
         ></video>
         <div class="screen-shade" aria-hidden="true"></div>
-        <div id="experience-label" class="experience-label" hidden></div>
-        <button id="reset" class="reset" type="button" hidden>
-          Back to all stories
-        </button>
       </section>
     </main>
 
-    <script src="./config.js?v=20260805-2" defer></script>
-    <script src="./app.js?v=20260805-2" defer></script>
+    <script src="./config.js?v=20260806-1" defer></script>
+    <script src="./app.js?v=20260806-1" defer></script>
   </body>
 </html>

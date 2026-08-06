@@ -1,10 +1,10 @@
 # Koyal Event Player
 
-Static event kiosk: guests enter their registration email and watch their
-personalized film. Before lookup and after reset, the right-hand player rotates
-through shared base films only; participant films never appear in that idle reel.
-Native video controls remain available in both modes so viewers can pause, seek,
-adjust volume, or enter fullscreen.
+Static event page: the right-hand player continuously rotates through the three
+shared base films. A guest can enter their registration email to open their
+personalized film separately; lookup never replaces the shared reel. Native
+video controls remain available so viewers can pause, seek, adjust volume, or
+enter fullscreen.
 
 ## Configure the base-film reel
 
@@ -19,9 +19,8 @@ loopVideos: [
 ]
 ```
 
-The repository currently retains the existing shared event loop as a temporary
-single-item fallback. Do not publish the participant email campaign until the
-three approved long-master URLs have replaced it and each one has been tested.
+The configured order is Space, Titanic, then Bollywood, repeating after the
+last film.
 
 ## Update the experience index
 

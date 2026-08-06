@@ -4,19 +4,14 @@ const LOOP_VIDEOS = configuredLoops.length
   : [{ label: "Koyal Experiences", url: window.ANTEROS_CONFIG.loopVideo }].filter(
       (video) => video.url,
     );
-const IDLE_TIMEOUT_MS = 3 * 60 * 1000;
-
 const form = document.querySelector("#lookup-form");
 const input = document.querySelector("#email");
 const message = document.querySelector("#message");
+const personalFilmLink = document.querySelector("#personal-film-link");
 const player = document.querySelector("#player");
-const experienceLabel = document.querySelector("#experience-label");
-const resetButton = document.querySelector("#reset");
 
 let experiences = {};
-let idleTimer;
 let idleVideoIndex = 0;
-let isShowingExperience = false;
 
 function setMessage(text = "", state = "") {
   message.textContent = text;
@@ -39,14 +34,12 @@ async function hashEmail(email) {
     .join("");
 }
 
-function armIdleTimer() {
-  window.clearTimeout(idleTimer);
-  idleTimer = window.setTimeout(showIdleLoop, IDLE_TIMEOUT_MS);
+function hidePersonalFilm() {
+  personalFilmLink.hidden = true;
+  personalFilmLink.removeAttribute("href");
 }
 
-function showIdleLoop() {
-  window.clearTimeout(idleTimer);
-  isShowingExperience = false;
+function playSharedFilm() {
   player.pause();
   player.controls = true;
   player.muted = true;
@@ -58,32 +51,20 @@ function showIdleLoop() {
   player.src = LOOP_VIDEOS[idleVideoIndex].url;
   player.load();
   player.play().catch(() => {});
-  experienceLabel.hidden = true;
-  resetButton.hidden = true;
-  form.reset();
-  setMessage();
 }
 
-function showExperience(experience) {
-  isShowingExperience = true;
-  player.pause();
-  player.controls = true;
-  player.muted = false;
-  player.loop = false;
-  player.src = experience.url;
-  player.load();
-  player.play().catch(() => {
-    setMessage("Press play on the video to begin.", "success");
-  });
-  experienceLabel.textContent = `${experience.experience} · Your film`;
-  experienceLabel.hidden = false;
-  resetButton.hidden = false;
-  setMessage("Found it. Enjoy your film.", "success");
-  armIdleTimer();
+function showPersonalFilm(experience) {
+  personalFilmLink.href = experience.url;
+  personalFilmLink.hidden = false;
+  setMessage(
+    "Found it. Open your film below while the event experiences keep playing.",
+    "success",
+  );
 }
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
+  hidePersonalFilm();
   const email = normalizeEmail(input.value);
   if (!email || !input.validity.valid) {
     setMessage("Enter the email you used to register.", "error");
@@ -103,25 +84,15 @@ form.addEventListener("submit", async (event) => {
       input.select();
       return;
     }
-    showExperience(experience);
+    showPersonalFilm(experience);
   } catch {
     setMessage("Something went wrong. Please ask a host for help.", "error");
   }
 });
 
-resetButton.addEventListener("click", showIdleLoop);
 player.addEventListener("ended", () => {
-  if (isShowingExperience) {
-    window.setTimeout(showIdleLoop, 1500);
-    return;
-  }
   idleVideoIndex = (idleVideoIndex + 1) % LOOP_VIDEOS.length;
-  showIdleLoop();
-});
-["pointerdown", "keydown", "touchstart"].forEach((eventName) => {
-  document.addEventListener(eventName, () => {
-    if (isShowingExperience) armIdleTimer();
-  });
+  playSharedFilm();
 });
 
 fetch("./data/experiences.json", { cache: "no-store" })
@@ -136,4 +107,5 @@ fetch("./data/experiences.json", { cache: "no-store" })
     setMessage("The experience list could not load. Please refresh.", "error");
   });
 
-showIdleLoop();
+hidePersonalFilm();
+playSharedFilm();
