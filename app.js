@@ -58,7 +58,8 @@ function showIdleLoop() {
   player.src = LOOP_VIDEOS[idleVideoIndex].url;
   player.load();
   player.play().catch(() => {});
-  experienceLabel.hidden = true;
+  experienceLabel.textContent = "Event reel · Enter email to play yours";
+  experienceLabel.hidden = false;
   resetButton.hidden = true;
   form.reset();
   setMessage();
